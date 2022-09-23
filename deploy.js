@@ -1,27 +1,28 @@
-const ethers = require("ethers");
+const ethers = require("ethers")
 // const solc = require("solc")
-const fs = require("fs-extra");
-require("dotenv").config();
+const fs = require("fs-extra")
+require("dotenv").config()
 
 async function main() {
-  let provider = new ethers.providers.JsonRpcProvider(process.env.RCP_URL);
-  // let wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
-  const encryptedJson = fs.readFileSync("./.encryptedKey.json", "utf8");
-  let wallet = new ethers.Wallet.fromEncryptedJsonSync(
-    encryptedJson,
-    process.env.PRIVATE_KEY_PASSWORD
-  );
-  wallet = wallet.connect(provider);
-  const abi = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.abi", "utf8");
+  let provider = new ethers.providers.JsonRpcProvider(process.env.RCP_URL)
+  let wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
+  //   const encryptedJson = fs.readFileSync("./.encryptedKey.json", "utf8");
+  //   let wallet = new ethers.Wallet.fromEncryptedJsonSync(
+  //     encryptedJson,
+  //     process.env.PRIVATE_KEY_PASSWORD
+  //   );
+  //   wallet = wallet.connect(provider);
+  const abi = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.abi", "utf8")
   const binary = fs.readFileSync(
     "./SimpleStorage_sol_SimpleStorage.bin",
     "utf8"
-  );
-  const contractFactory = new ethers.ContractFactory(abi, binary, wallet);
-  console.log("Deploying, please wait...");
-  const contract = await contractFactory.deploy({});
+  )
+  const contractFactory = new ethers.ContractFactory(abi, binary, wallet)
+  console.log("Deploying, please wait...")
+  const contract = await contractFactory.deploy({})
+  console.log("contract address", contract.address)
   // const contract = await contractFactory.deploy({ gasPrice: 100000000000 })
-  const deploymentReceipt = await contract.deployTransaction.wait(1);
+  const deploymentReceipt = await contract.deployTransaction.wait(1)
   // console.log("Here is the transaction:")
   // console.log(contract.deployTransaction)
   // console.log("Here is the receipt:")
@@ -50,17 +51,17 @@ async function main() {
   // let resp = await wallet.signTransaction(tx)
   // const sentTxResponse = await wallet.sendTransaction(tx);
   // console.log(resp)
-  const retrive = await contract.retrieve();
-  console.log("retrive", retrive.toString());
-  const transactionResponse = await contract.store("89");
-  const transactionRecipt = await transactionResponse.wait(1);
-  const updatedRetrive = await contract.retrieve();
-  console.log("retrive", updatedRetrive.toString());
+  const retrive = await contract.retrieve()
+  console.log("retrive", retrive.toString())
+  const transactionResponse = await contract.store("89")
+  const transactionRecipt = await transactionResponse.wait(1)
+  const updatedRetrive = await contract.retrieve()
+  console.log("retrive", updatedRetrive.toString())
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+    console.error(error)
+    process.exit(1)
+  })
